@@ -1,12 +1,19 @@
 import random
 import datetime
 from pathlib import Path
+import shutil
 
 
 # init variables
 date = datetime.datetime.now()
 port_num = 1
 port_connected = ".server"
+
+server_files = []
+
+# idea init
+# connection is the server base. it reads and produces
+# the session does the work itself, its short ram memory whhile con is hard memory
 
 
 print("vsbalm 1.0.0 -", date, "port:", port_connected)
@@ -61,6 +68,23 @@ while True:
     elif command == "exit":
         print("Closing... vsbalm.")
         break
+
+    elif command.startswith("start"):
+        folder = Path(f"./{command[6:]}")
+        server_files = []
+
+        for item in folder.iterdir():
+            if item.is_file():
+                server_files.append(item.name)
+
+        print(f"files found: {command[6:]}/", server_files)
+        print("copying to workspace...")
+
+        local = Path("./local")
+
+        for item in folder.iterdir():
+            if item.is_file():
+                shutil.copy2(item, local / item.name)
 
     else:
         print("Unknown command.")
