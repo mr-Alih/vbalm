@@ -88,15 +88,27 @@ while True:
 
         # after loading the files repeat connection.
 
-    elif command == "reload":
-        return()
+    # elif command == "reload":
+    #     return
     
-    elif command == "connection status":
-        return()
+    # elif command == "connection status":
+    #     return()
 
-    elif command.startswith("load"):
-        return()
-
+    elif command.startswith("push"):
+        folder = Path("./local")
+        server_files = []
+    
+        for item in folder.iterdir():
+            if item.is_file():
+                server_files.append(item.name)
+    
+        print("Versonic balm pushing...")
+    
+        server = Path("./server")
+    
+        for item in folder.iterdir():
+            if item.is_file():
+                shutil.copy2(item, server / item.name)
     
     
 
