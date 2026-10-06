@@ -69,15 +69,15 @@ while True:
         print("Closing... vsbalm.")
         break
 
-    elif command.startswith("start"):
-        folder = Path(f"./{command[6:]}")
+    elif command.startswith("load"):
+        folder = Path(f"./{command[5:]}")
         server_files = []
 
         for item in folder.iterdir():
             if item.is_file():
                 server_files.append(item.name)
 
-        print(f"files found: {command[6:]}/", server_files)
+        print(f"files found: {command[5:]}/", server_files)
         print("copying to workspace...")
 
         local = Path("./local")
@@ -85,6 +85,20 @@ while True:
         for item in folder.iterdir():
             if item.is_file():
                 shutil.copy2(item, local / item.name)
+
+        # after loading the files repeat connection.
+
+    elif command == "reload":
+        return()
+    
+    elif command == "connection status":
+        return()
+
+    elif command.startswith("load"):
+        return()
+
+    
+    
 
     else:
         print("Unknown command.")
