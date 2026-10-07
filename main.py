@@ -53,6 +53,47 @@ def checkport():
             pass
     return session("connect")
 
+# error control
+def error(messagesort):
+    if messagesort == "wdir":
+        print("error - wrong direction rep.")
+        return()
+    else:
+        print("error FALSE N 404")
+        return()
+
+def load():
+    command = input("load > ")
+
+    if not command.strip():
+        error("")
+        return
+
+    folder = Path(f"./{command}")
+
+    if not folder.is_dir():
+        error("wdir")
+        return
+
+    server_files = []
+
+    for item in folder.iterdir():
+        if item.is_file():
+            server_files.append(item.name)
+
+    if not server_files:
+        error("wdir")
+        return
+
+    print(f"files found: {command}/", server_files)
+    print("copying to workspace...")
+
+    local = Path("./local")
+    local.mkdir(exist_ok=True)
+
+    for item in folder.iterdir():
+        if item.is_file():
+            shutil.copy2(item, local / item.name)
 
 # main loop
 
@@ -70,23 +111,10 @@ while True:
         break
 
     elif command.startswith("load"):
-        folder = Path(f"./{command[5:]}")
-        server_files = []
-
-        for item in folder.iterdir():
-            if item.is_file():
-                server_files.append(item.name)
-
-        print(f"files found: {command[5:]}/", server_files)
-        print("copying to workspace...")
-
-        local = Path("./local")
-
-        for item in folder.iterdir():
-            if item.is_file():
-                shutil.copy2(item, local / item.name)
+        load()
 
         # after loading the files repeat connection.
+
 
     # elif command == "reload":
     #     return
@@ -109,7 +137,6 @@ while True:
         for item in folder.iterdir():
             if item.is_file():
                 shutil.copy2(item, server / item.name)
-    
     
 
     else:
