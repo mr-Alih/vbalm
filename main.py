@@ -2,7 +2,7 @@ import random
 import datetime
 from pathlib import Path
 import shutil
-
+import shlex
 
 # init variables
 date = datetime.datetime.now()
@@ -62,10 +62,8 @@ def error(messagesort):
         print("error FALSE N 404")
         return()
 
-def load():
-    command = input("load > ")
-
-    if not command.strip():
+def load(command):
+    if not command:
         error("")
         return
 
@@ -97,47 +95,46 @@ def load():
 
 # main loop
 
-while True:
-    command = input("vb > ")
 
-    if command == "port":
+while True:
+    try:
+        parts = shlex.split(input("vb > "))
+    except ValueError:
+        print("Bad quotes in command.")
+        continue
+
+    if not parts:
+        continue
+
+    cmd, args = parts[0], parts[1:]
+
+    if cmd == "port":
         port_connected = checkport()
 
-    elif command == "session status":
+    elif cmd == "session" and args == ["status"]:
         session("status")
 
-    elif command == "exit":
-        print("Closing... vsbalm.")
-        break
+    elif cmd == "load":
+        load(args[0] if args else None)
 
-    elif command.startswith("load"):
-        load()
-
-        # after loading the files repeat connection.
-
-
-    # elif command == "reload":
-    #     return
-    
-    # elif command == "connection status":
-    #     return()
-
-    elif command.startswith("push"):
-        folder = Path("./local")
-        server_files = []
-    
-        for item in folder.iterdir():
-            if item.is_file():
-                server_files.append(item.name)
-    
-        print("Versonic balm pushing...")
-    
+    elif cmd == "push":
+        local = Path("./local")
         server = Path("./server")
-    
-        for item in folder.iterdir():
+
+        if not local.is_dir():
+            print("Nothing to push. Run load first.")
+            continue
+
+        server.mkdir(exist_ok=True)
+        print("Versonic balm pushing...")
+
+        for item in local.iterdir():
             if item.is_file():
                 shutil.copy2(item, server / item.name)
-    
+
+    elif cmd == "exit":
+        print("Closing... vsbalm.")
+        break
 
     else:
         print("Unknown command.")
